@@ -142,4 +142,5 @@ def start():
     # increase_image_size(Image.open('items.png'), 8)
 
 
-start()
+if __name__ == '__main__':
+    start()
