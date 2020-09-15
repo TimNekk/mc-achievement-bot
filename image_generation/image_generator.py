@@ -1,12 +1,13 @@
 from PIL import Image, ImageFont, ImageDraw
 from math import ceil, floor
+from os import remove
 
 
 icon_size = 32
 
 
 def get_font(size: int):
-    return ImageFont.truetype('Minecraft.ttf', size)
+    return ImageFont.truetype('image_generation/minecraft.ttf', size)
 
 
 def get_size_of_image(top_text: str, bottom_text: str):
@@ -82,8 +83,17 @@ def increase_image_size(image: Image, multiplier: float):
     return image.resize((image.size[0] * multiplier, image.size[1] * multiplier))
 
 
-def get_icons():
-    image = Image.open('items.png')
+def create_all_items_image():
+    icons = get_icons(path='image_generation/items.png')
+    increase_image_size(create_numbered_grid(icons), 2).save('image_generation/all_items.png', 'PNG')
+
+
+def delete_image(image_path):
+    remove(image_path)
+
+
+def get_icons(path='items.png'):
+    image = Image.open(path)
     items = split_image_with_grid(image)
     return items
 
@@ -131,6 +141,11 @@ def create_numbered_grid(items: list, items_in_a_row=20, space_for_text=20, font
     return image
 
 
+def create_achievement(upper_text, bottom_text, icon_id):
+    icons = get_icons(path='image_generation/items.png')
+    create_image(upper_text, bottom_text, icons[icon_id+1]).save('image_generation/achievement', 'PNG')
+
+
 def start():
     top_text = input("Введите верхний текст: ")
     bottom_text = input("Введите нижний текст: ")
@@ -139,6 +154,7 @@ def start():
 
     icon_number = int(input('Номер иконки: ')) - 1
     create_image(top_text, bottom_text, icons[icon_number]).show()
+    create_image(top_text, bottom_text, icons[icon_number]).save('Template', 'PNG')
     # increase_image_size(Image.open('items.png'), 8)
 
 
