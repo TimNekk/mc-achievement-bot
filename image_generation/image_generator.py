@@ -1,13 +1,19 @@
 from PIL import Image, ImageFont, ImageDraw
+from  PIL.ImageOps import fit
 from math import ceil, floor
 from os import remove
 
 
 icon_size = 32
+achievement_path = 'image_generation/achievement.png'
+font_path = 'image_generation/minecraft.ttf'
+items_path = 'image_generation/items.png'
+all_items_path = 'image_generation/all_items.png'
+user_image_path = 'image_generation/user_image.png'
 
 
 def get_font(size: int):
-    return ImageFont.truetype('image_generation/minecraft.ttf', size)
+    return ImageFont.truetype(font_path, size)
 
 
 def get_size_of_image(top_text: str, bottom_text: str):
@@ -64,17 +70,11 @@ def create_image(top_text: str, bottom_text: str, icon: Image):
     imagedraw.text((60, 36), bottom_text, font=font, fill=(255, 255, 255))
 
     # Icon
-    turn_back = False
-    if icon.size[0] > icon.size[1]:
-        icon = icon.rotate(90)
-        turn_back = True
-    new_width = icon_size
-    new_height = int(new_width * icon.size[1] / icon.size[0])
-    icon = icon.resize((new_width, new_height), Image.ANTIALIAS)
-    icon = icon.crop((0, int((new_height - icon_size - 1) / 2), new_width - 1, new_height - int((new_height - icon_size - 1) / 2)))
-    if turn_back:
-        icon = icon.rotate(-90)
-    image.paste(icon, (15, 16), mask=icon)
+    icon = fit(icon, (icon_size, icon_size), Image.ANTIALIAS)
+    try:
+        image.paste(icon, (15, 16), mask=icon)
+    except ValueError:
+        image.paste(icon, (15, 16))
 
     return image
 
@@ -84,8 +84,8 @@ def increase_image_size(image: Image, multiplier: float):
 
 
 def create_all_items_image():
-    icons = get_icons(path='image_generation/items.png')
-    increase_image_size(create_numbered_grid(icons), 2).save('image_generation/all_items.png', 'PNG')
+    icons = get_icons(path=items_path)
+    increase_image_size(create_numbered_grid(icons), 2).save(all_items_path, 'PNG')
 
 
 def delete_image(image_path):
@@ -141,9 +141,15 @@ def create_numbered_grid(items: list, items_in_a_row=20, space_for_text=20, font
     return image
 
 
-def create_achievement(upper_text, bottom_text, icon_id):
-    icons = get_icons(path='image_generation/items.png')
-    create_image(upper_text, bottom_text, icons[icon_id+1]).save('image_generation/achievement', 'PNG')
+def create_achievement_icon(upper_text, bottom_text, icon_id):
+    icons = get_icons(path=items_path)
+    create_image(upper_text, bottom_text, icons[icon_id+1]).save(achievement_path, 'PNG')
+
+
+def create_achievement_user_image(upper_text, bottom_text):
+    image = Image.open(user_image_path)
+    create_image(upper_text, bottom_text, image).save(achievement_path, 'PNG')
+    remove(user_image_path)
 
 
 def start():
