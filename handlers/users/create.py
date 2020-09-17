@@ -7,8 +7,8 @@ from keyboards.inline.items import items_keyboard, all_items_hide_keyboard, popu
 from keyboards.inline.template import template_achievement_keyboard
 from loader import dp
 from states import Creation
-from image_generation.image_generator import create_all_items_image, delete_image, create_achievement_icon, \
-    achievement_path, user_image_path, create_achievement_user_image, get_icons
+from image_generation.image_generator import get_icons, delete_image, create_achievement_icon, \
+    achievement_path, user_image_path, create_achievement_user_image
 
 
 @dp.message_handler(commands=['create'])

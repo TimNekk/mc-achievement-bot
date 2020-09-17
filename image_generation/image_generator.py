@@ -1,5 +1,5 @@
 from PIL import Image, ImageFont, ImageDraw
-from  PIL.ImageOps import fit
+from PIL.ImageOps import fit
 from math import ceil, floor
 from os import remove
 
@@ -12,8 +12,11 @@ all_items_path = 'image_generation/all_items.png'
 user_image_path = 'image_generation/user_image.png'
 
 
-def get_font(size: int):
-    return ImageFont.truetype(font_path, size)
+def get_font(size: int, from_main_file=False):
+    if from_main_file:
+        return ImageFont.truetype('minecraft.ttf', size)
+    else:
+        return ImageFont.truetype(font_path, size)
 
 
 def get_size_of_image(top_text: str, bottom_text: str):
@@ -84,7 +87,7 @@ def increase_image_size(image: Image, multiplier: float):
 
 
 def create_all_items_image():
-    icons = get_icons(path=items_path)
+    icons = get_icons()
     increase_image_size(create_numbered_grid(icons), 2).save(all_items_path, 'PNG')
 
 
@@ -92,8 +95,8 @@ def delete_image(image_path):
     remove(image_path)
 
 
-def get_icons(path='items.png'):
-    image = Image.open(path)
+def get_icons():
+    image = Image.open(items_path)
     items = split_image_with_grid(image)
     return items
 
@@ -142,8 +145,8 @@ def create_numbered_grid(items: list, items_in_a_row=20, space_for_text=20, font
 
 
 def create_achievement_icon(upper_text, bottom_text, icon_id):
-    icons = get_icons(path=items_path)
-    create_image(upper_text, bottom_text, icons[icon_id+1]).save(achievement_path, 'PNG')
+    icons = get_icons()
+    create_image(upper_text, bottom_text, icons[icon_id-1]).save(achievement_path, 'PNG')
 
 
 def create_achievement_user_image(upper_text, bottom_text):
@@ -165,4 +168,4 @@ def start():
 
 
 if __name__ == '__main__':
-    start()
+    create_all_items_image()
